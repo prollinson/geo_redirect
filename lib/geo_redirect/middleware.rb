@@ -15,6 +15,7 @@ module GeoRedirect
       @logger = init_logger(options[:logfile]) if options[:logfile]
       @db     = init_db(options[:db])
       @config = init_config(options[:config])
+      @skip_if = options[:skip_if] ? false : options[:skip_if]
 
       log 'Initialized middleware'
     end
@@ -22,7 +23,7 @@ module GeoRedirect
     def call(env)
       @request = Rack::Request.new(env)
 
-      if skip_redirect?
+      if skip_redirect? || @skip_if
         @app.call(env)
 
       elsif force_redirect?
